@@ -9,6 +9,14 @@ def centroid_y(
 
 
 
+def area_above_below_equal(
+
+
+
+def area_moment_above_below_equal(
+
+
+
 def moment_of_inertia(
 
 

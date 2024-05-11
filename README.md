@@ -35,17 +35,34 @@ $$
 
 * In `beam_analysis.py`, implement the following Python functions to calculate the area, centroid, moment of inertia, and bending stress of a T-beam cross-section.<br>`beam_analysis.py` 파일에 아래 파이썬 함수를 구현하여 T형 단면의 면적, 중심, 관성 모멘트, 그리고 굽힘 응력을 계산하시오.
 
-| function | description |
-|:--------:|:-----------:|
-| `area(w0, h0, w1, h1, w2, h2):` | The total area of the T-beam cross-section.<br> T형 단면의 전체 면적 |
-| `centroid_y(w0, h0, w1, h1, w2, h2):` | The vertical distance from the bottom of the section to the neutral axis (centroid).<br> 단면의 하단으로부터 단면의 중립축(중심축)까지의 수직 거리 |
-| `moment_of_inertia(w0, h0, w1, h1, w2, h2):` | The moment of inertia (I) of the T-beam cross-section.<br>T형 단면의 관성 모멘트(I) |
-| `bending_stress(M, w0, h0, w1, h1, w2, h2):` | The maximum bending stress (σ) at the top or bottom fibers of the T-beam.<br> T형 단면의 상단 또는 하단에서의 최대 굽힘 응력(σ) |
+| function<br>함수 | type<br>형 | unit<br>단위 | return value<br>반환값 |
+|:--------:|:-----------:|:-----------:|:-----------:|
+| `area(w0, h0, w1, h1, w2, h2):` | `float` | $m^2$ | The total area of the T-beam cross-section.<br> T형 단면의 전체 면적 |
+| `centroid_y(w0, h0, w1, h1, w2, h2):` | `float` | $m$ | The vertical distance from the bottom of the section to the neutral axis (centroid).<br> 단면의 하단으로부터 단면의 중립축(중심축)까지의 수직 거리 |
+| `moment_of_inertia(w0, h0, w1, h1, w2, h2):` | `float` | $m^4$ | The moment of inertia (I) of the beam cross-section about the neutral axis.<br>중립축 중심의 단면의 관성 모멘트(I) |
+| `bending_stress(M, w0, h0, w1, h1, w2, h2):` | `float` | $Pa$ | The maximum bending stress (σ) at the top or bottom fibers of the beam.<br> 단면의 상단 또는 하단에서의 최대 굽힘 응력(σ) |
 
 * All arguments and return values would be `float`<br>모든 매개변수와 반환값은 `float`.
 * All units of length are in meters.<br>길이의 단위는 미터.
 * All units of force are in Newtons.<br>힘의 단위는 뉴턴.
-* May use `numpy` & `scipy`.<br>`numpy` & `scipy` 사용 가능
+* May use `numpy` & `scipy`.<br>`numpy` & `scipy` 사용 가능.
+
+* Also implement following two functions returning a `dict` respectivley. <br>다음 두 함수도 구현하시오. 각각 `dict`를 반환하시오.
+* `area_above_below_equal(w0, h0, w1, h1, w2, h2)`
+
+| return value key<br>반환값 key | type<br>형 | unit<br>단위 | value |
+|:--------:|:-----------:|:-----------:|:-----------:|
+| `'a_above'` | `float` | $m^2$ | area of the section above the centroid<br>중립축 위의 단면의 넓이 |
+| `'a_below'` | `float` | $m^2$ | area of the section below the centroid<br>중립축 아래의 단면의 넓이 |
+| `'close'` | `bool` | - | whether these two areas are close to each other?<br>두 넓이가 가까운가? |
+
+* `area_moment_above_below_equal(w0, h0, w1, h1, w2, h2)`
+
+| return value key<br>반환값 key | type<br>형 |unit<br>단위 | value |
+|:--------:|:-----------:|:-----------:|:-----------:|
+| `'a_moment_above'` | `float` | $m^3$ | area moment of the section above the centroid<br>중립축 위의 면적 모멘트 |
+| `'a_moment_below'` | `float` | $m^3$ | area moment of the section below the centroid<br>중립축 아래의 면적 모멘트 |
+| `'close'` | `bool` | - | whether these two area moments are close to each other?<br>두 면적 모멘트가 가까운가? |
 
 ## Grading Criteria<br>평가기준
 
@@ -71,15 +88,29 @@ w0_m, h0_m = 50e-3, 12e-3
 w1_m, h1_m = 7.5e-3, 70e-3
 w2_m, h2_m = 90e-3, 10e-3
 
+M_Nm = 100
+
 area_m2 = beam.area(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
 centroid_m = beam.centroid_y(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
 moment_m4 = beam.moment_of_inertia(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
-bending_stress_max_pa = beam.bending_stress(100, w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+bending_stress_max_pa = beam.bending_stress(M_Nm, w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
 
-print(f'T-beam area: {area_m2:.6f} m^2')
-print(f'T-beam centroid: {centroid_m:.6f} m')
-print(f'T-beam moment of inertia: {moment_m4:.6f} m^4')
-print(f'T-beam max bending stress: {bending_stress_max_pa:.6f} Pa')
+print(f'Section area: {area_m2:.6g} m^2')
+print(f'Section neutral axis: {centroid_m:.6g} m')
+print(f'Section moment of inertia about the neutral axis: {moment_m4:.6g} m^4')
+print(f'Max bending stress: {bending_stress_max_pa:.6g} Pa')
+
+a_above_below = area_above_below_equal(w0, h0, w1, h1, w2, h2)
+
+print(f"Area above the centroid {a_above_above['a_above']:.6g} m^2")
+print(f"Area below the centroid {a_above_below['a_below']:.6g} m^2")
+print(f"Are these areas close? {a_above_below['close']}")
+
+q_above_below = area_moment_above_below_equal(w0, h0, w1, h1, w2, h2)
+
+print(f"Area moment above the centroid {a_above_above['a_moment_above']:.6g} m^2")
+print(f"Area moment below the centroid {a_above_below['a_moment_below']:.6g} m^2")
+print(f"Are these area moments close? {a_above_below['close']}")
 
 plt.fill_between([(-0.5) * w0_m, (0.5) * w0_m], [0, 0], [h0_m, h0_m], color='blue', alpha=0.5)
 plt.fill_between([(-0.5) * w1_m, (0.5) * w1_m], [h0_m, h0_m], [h1_m+h0_m, h1_m+h0_m], color='blue', alpha=0.5)
@@ -89,4 +120,4 @@ plt.grid(True)
 plt.show()
 ```
 
- So, what are you waiting for? Let's build a treehouse that's so epic that even Bart would envy! 🍕<br>이제 나무 위에 바트도 부러워 할 역대급 놀이방을 만들어 봅시다!
+ So, what are you waiting for? Let's build a treehouse that's so epic that even Bart would envy! 🍕<br>이제 나무 위에 바트도 부러워 할 역대급 놀이방을 만들어 봅시다! 🍕
