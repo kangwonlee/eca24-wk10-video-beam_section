@@ -1,10 +1,10 @@
 
-# Dude, Don't Let Your Treehouse Floor Go 'D'oh!' – Bending Stress Edition<br>친구, 트리하우스 바닥이 '으악' 하지 않게 조심해! – 굽힘 응력 편
+# Hey, Don't Let Your Treehouse Floor Go 'D'oh!' – Bending Stress Edition<br>친구, 트리하우스 바닥이 '으악' 하지 않게 조심해! – 굽힘 응력 편
 
-* Ever dreamt of building the raddest treehouse? Well, before you start hammering away, let's make sure that floor isn't gonna send you crashing down like a gnarly wipeout.  This assignment will teach you how to use numerical methods to calculate the bending stress on your treehouse floor supports.<br>나무 위에 멋진 놀이방을 만들어 보는 건 어떨까요? 공사를 시작하기 전에, 바닥이 무너지지 않을지 확인해야 합니다. 이 과제에서는 수치적 방법을 사용하여 아늑한 휴식처의 바닥을 지지하는 보의 굽힘 응력을 계산하는 방법을 알아봅시다.
+* Ever dreamt of building the raddest treehouse? Well, before you start hammering away, let's make sure that floor isn't gonna send you crashing down like a gnarly wipeout.  This assignment will teach you how to use numerical methods to calculate the bending stress on your treehouse floor supports.<br>나무 위에 멋진 놀이방을 만들어 보는 건 어떨까요? 공사를 시작하기 전에, 바닥이 무너지지 않을지 확인 부터 해 봅시다. 이 과제에서는 수치적 방법을 사용하여 아늑한 휴식처의 바닥을 지지하는 보의 굽힘 응력을 계산하는 방법을 알아봅시다.
 
 ![Tree House](https://github.com/kangwonlee/beam_section/assets/17876446/051577ce-2f31-4ade-ac67-78122132a538)
-Can I use Simpson formula to do this?<br>심슨 공식으로 할 수 있을까요?
+Can we use Simpson formula to do this?<br>심슨 공식으로 할 수 있을까요?
 
 ## Learning Objectives<br>학습 목표
 
@@ -46,7 +46,7 @@ $$
 * All units of length are in meters.<br>길이의 단위는 미터.
 * All units of force are in Newtons.<br>힘의 단위는 뉴턴.
 
-## Grading: Totally Tubular Rubric<br>평가기준
+## Grading Criteria<br>평가기준
 
 | Criteria<br>기준	| Points<br>배점 |
 |:---------:|:------:|
@@ -88,4 +88,4 @@ plt.grid(True)
 plt.show()
 ```
 
- So, what are you waiting for? Let's build a treehouse that's so epic! 🍕<br>이제 나무 위에 역대급 놀이방을 만들어 봅시다!
+ So, what are you waiting for? Let's build a treehouse that's so epic that even Bart would envy! 🍕<br>이제 나무 위에 바트도 부러워 할 역대급 놀이방을 만들어 봅시다!
