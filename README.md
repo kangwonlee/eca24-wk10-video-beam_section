@@ -45,6 +45,7 @@ $$
 * All arguments and return values would be `float`<br>모든 매개변수와 반환값은 `float`.
 * All units of length are in meters.<br>길이의 단위는 미터.
 * All units of force are in Newtons.<br>힘의 단위는 뉴턴.
+* May use `numpy` & `scipy`.<br>`numpy` & `scipy` 사용 가능
 
 ## Grading Criteria<br>평가기준
 
