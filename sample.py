@@ -1,49 +1,41 @@
 import matplotlib.pyplot as plt
-import numpy as np
-
-
 import beam_analysis as beam
 
 
-def w_Npm(x_m):
-    # constant distributed load function
-    # 균일 분포 하중 함수
-    # q(x) = 1000.0 N/m
-    return 1000.0 * np.ones_like(x_m)
-
-# if interested, please try other functions
-# 관심이 있다면 다른 함수를 시도해보세요
-
-
 def sample_main():
-    x_begin_m = 0.0
-    x_end_m = 3.0
+    w0_m, h0_m = 50e-3, 12e-3
+    w1_m, h1_m = 7.5e-3, 70e-3
+    w2_m, h2_m = 90e-3, 10e-3
 
-    x_m_array = np.linspace(x_begin_m, x_end_m)
+    area_m2 = beam.area(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+    centroid_m = beam.centroid_y(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+    moment_m4 = beam.moment_of_inertia(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+    bending_stress_max_pa = beam.bending_stress(100, w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
 
-    # calculate SFD and BMD
-    sfd = beam.calculate_shear_force(
-        x_m_array, x_end_m, w_Npm
-    )
+    print(f'T-beam area: {area_m2:.6f} m^2')
+    print(f'T-beam centroid: {centroid_m:.6f} m')
+    print(f'T-beam moment of inertia: {moment_m4:.6f} m^4')
+    print(f'T-beam max bending stress: {bending_stress_max_pa:.6f} Pa')
 
-    bmd = beam.calculate_shear_force(
-        x_m_array, x_end_m, w_Npm
-    )
+    plt.fill_between(
+        x=[(-0.5) * w0_m, (0.5) * w0_m],
+        y1=[0, 0],
+        y2=[h0_m, h0_m],
+        color='blue', alpha=0.5)
+    plt.fill_between(
+        x=[(-0.5) * w1_m, (0.5) * w1_m],
+        y1=[h0_m, h0_m],
+        y2=[h1_m+h0_m, h1_m+h0_m],
+        color='blue', alpha=0.5)
+    plt.fill_between(
+        x=[(-0.5) * w2_m, (0.5) * w2_m],
+        y1=[h1_m+h0_m, h1_m+h0_m],
+        y2=[h2_m+h1_m+h0_m, h2_m+h1_m+h0_m],
+        color='blue', alpha=0.5)
+    plt.axhline(y=centroid_m, color='red', linestyle='--')
+    plt.grid(True)
+    plt.savefig('section.png')
 
-    # plot SFD and BMD
-    plt.subplot(2, 1, 1)
-    plt.plot(x_m_array, sfd, label='SFD')
-    plt.title('SFD (N)')
-    plt.grid()
 
-    plt.subplot(2, 1, 2)
-    plt.plot(x_m_array, bmd, label='BMD')
-    plt.title('BMD (Nm)')
-    plt.xlabel('x (m)')
-    plt.grid()
-
-    plt.savefig('result.png')
-
-
-if "__main__" == __name__:
+if __name__ == "__main__":
     sample_main()

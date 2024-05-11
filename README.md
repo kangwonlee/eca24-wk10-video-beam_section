@@ -81,7 +81,7 @@ print(f'T-beam moment of inertia: {moment_m4:.6f} m^4')
 print(f'T-beam max bending stress: {bending_stress_max_pa:.6f} Pa')
 
 plt.fill_between([(-0.5) * w0_m, (0.5) * w0_m], [0, 0], [h0_m, h0_m], color='blue', alpha=0.5)
-plt.fill_between([(-0.5) * w1_m, (0.5) * w1_m] [h0_m, h0_m], [h1_m+h0_m, h1_m+h0_m], color='blue', alpha=0.5)
+plt.fill_between([(-0.5) * w1_m, (0.5) * w1_m], [h0_m, h0_m], [h1_m+h0_m, h1_m+h0_m], color='blue', alpha=0.5)
 plt.fill_between([(-0.5) * w2_m, (0.5) * w2_m], [h1_m+h0_m, h1_m+h0_m], [h2_m+h1_m+h0_m, h2_m+h1_m+h0_m], color='blue', alpha=0.5)
 plt.axhline(y=centroid_m, color='red', linestyle='--')
 plt.grid(True)
