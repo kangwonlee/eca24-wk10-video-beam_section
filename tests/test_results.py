@@ -186,6 +186,7 @@ def result_area(wh:Tuple[float]):
     return ba.area(*wh)
 
 
+@pytest.mark.area
 def test_result_area_float(result_area:float):
     assert isinstance(result_area, float), (
         '\n'
@@ -194,6 +195,7 @@ def test_result_area_float(result_area:float):
     )
 
 
+@pytest.mark.area
 def test_result_area_value(result_area:float, tot_area_m2:float):
     assert math.isclose(result_area, tot_area_m2, rel_tol=1e-3), (
         '\n'
@@ -207,6 +209,7 @@ def result_centroid_y(wh:Tuple[float]):
     return ba.centroid_y(*wh)
 
 
+@pytest.mark.centroid_y
 def test_result_centroid_y_float(result_centroid_y:float):
     assert isinstance(result_centroid_y, float), (
         '\n'
@@ -215,6 +218,7 @@ def test_result_centroid_y_float(result_centroid_y:float):
     )
 
 
+@pytest.mark.centroid_y
 def test_result_centroid_y_value(
         result_centroid_y:float,
         expected_centroid_m:float):
@@ -230,6 +234,7 @@ def result_area_above_below_equal(wh:Tuple[float]):
     return ba.area_above_below_equal(*wh)
 
 
+@pytest.mark.area_above_below_equal
 def test_result_area_above_below_type(result_area_above_below_equal:float):
     assert isinstance(result_area_above_below_equal, dict), (
         '\n'
@@ -242,6 +247,7 @@ def test_result_area_above_below_type(result_area_above_below_equal:float):
     )
 
 
+@pytest.mark.area_above_below_equal
 def test_result_area_above_below_keys(
         result_area_above_below_equal:Dict[str, float],
         expected_a_above_below:Dict[str, float]):
@@ -259,6 +265,7 @@ def test_result_area_above_below_keys(
     )
 
 
+@pytest.mark.area_above_below_equal
 def test_result_area_above_below_value_above(
         result_area_above_below_equal:Dict[str, float],
         expected_a_above_below:Dict[str, float]):
@@ -273,6 +280,7 @@ def test_result_area_above_below_value_above(
     )
 
 
+@pytest.mark.area_above_below_equal
 def test_result_area_above_below_value_below(
         result_area_above_below_equal:Dict[str, float],
         expected_a_above_below:Dict[str, float]):
@@ -287,6 +295,7 @@ def test_result_area_above_below_value_below(
     )
 
 
+@pytest.mark.area_above_below_equal
 def test_result_area_above_below_value_close(
         result_area_above_below_equal:Dict[str, float],
         expected_a_above_below:Dict[str, float]):
@@ -306,6 +315,7 @@ def result_area_moment_above_below_equal(wh:Tuple[float]):
     return ba.area_moment_above_below_equal(*wh)
 
 
+@pytest.mark.area_moment_above_below_equal
 def test_result_area_moment_above_below_equal_type(
         result_area_moment_above_below_equal:float):
     assert isinstance(result_area_moment_above_below_equal, dict), (
@@ -317,6 +327,7 @@ def test_result_area_moment_above_below_equal_type(
     )
 
 
+@pytest.mark.area_moment_above_below_equal
 def test_result_area_moment_above_below_equal_keys(
         result_area_moment_above_below_equal:Dict[str, float],
         expected_a_moment_above_below:Dict[str, float]):
@@ -334,6 +345,7 @@ def test_result_area_moment_above_below_equal_keys(
     )
 
 
+@pytest.mark.area_moment_above_below_equal
 def test_result_area_moment_above_below_equal_value_above(
         result_area_moment_above_below_equal:Dict[str, float],
         expected_a_moment_above_below:Dict[str, float]):
@@ -348,6 +360,7 @@ def test_result_area_moment_above_below_equal_value_above(
     )
 
 
+@pytest.mark.area_moment_above_below_equal
 def test_result_area_moment_above_below_equal_value_below(
         result_area_moment_above_below_equal:Dict[str, float],
         expected_a_moment_above_below:Dict[str, float]):
@@ -362,6 +375,7 @@ def test_result_area_moment_above_below_equal_value_below(
     )
 
 
+@pytest.mark.area_moment_above_below_equal
 def test_result_area_moment_above_below_equal_value_close(
         result_area_moment_above_below_equal:Dict[str, float],
         expected_a_moment_above_below:Dict[str, float]):
@@ -381,6 +395,7 @@ def result_moment_of_inertia(wh:Tuple[float]):
     return ba.moment_of_inertia(*wh)
 
 
+@pytest.mark.moment_of_inertia
 def test_result_moment_of_inertia_float(result_moment_of_inertia:float):
     assert isinstance(result_moment_of_inertia, float), (
         '\n'
@@ -389,6 +404,7 @@ def test_result_moment_of_inertia_float(result_moment_of_inertia:float):
     )
 
 
+@pytest.mark.moment_of_inertia
 def test_result_moment_of_inertia_value(result_moment_of_inertia:float, tot_I_m4:float):
     assert math.isclose(result_moment_of_inertia, tot_I_m4, rel_tol=1e-3), (
         '\n'
@@ -407,6 +423,7 @@ def expected_bending_stress_Pa(M_Nm:float, height_m:Tuple[float], tot_I_m4:float
     return max(abs(M_Nm * expected_centroid_m / tot_I_m4), abs(M_Nm * (sum(height_m) - expected_centroid_m) / tot_I_m4))
 
 
+@pytest.mark.bending_stress
 def test_bending_stress_type(result_bending_stress:float):
     assert isinstance(result_bending_stress, float), (
         '\n'
@@ -415,6 +432,7 @@ def test_bending_stress_type(result_bending_stress:float):
     )
 
 
+@pytest.mark.bending_stress
 def test_result_result_bending_stress_value(
         result_bending_stress:float,
         expected_bending_stress_Pa:float):
