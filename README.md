@@ -108,9 +108,9 @@ print(f"Are these areas close? {a_above_below['close']}")
 
 q_above_below = area_moment_above_below_equal(w0, h0, w1, h1, w2, h2)
 
-print(f"Area moment above the centroid {a_above_above['a_moment_above']:.6g} m^2")
-print(f"Area moment below the centroid {a_above_below['a_moment_below']:.6g} m^2")
-print(f"Are these area moments close? {a_above_below['close']}")
+print(f"Area moment above the centroid {q_above_below['a_moment_above']:.6g} m^2")
+print(f"Area moment below the centroid {q_above_below['a_moment_below']:.6g} m^2")
+print(f"Are these area moments close? {q_above_below['close']}")
 
 plt.fill_between([(-0.5) * w0_m, (0.5) * w0_m], [0, 0], [h0_m, h0_m], color='blue', alpha=0.5)
 plt.fill_between([(-0.5) * w1_m, (0.5) * w1_m], [h0_m, h0_m], [h1_m+h0_m, h1_m+h0_m], color='blue', alpha=0.5)
