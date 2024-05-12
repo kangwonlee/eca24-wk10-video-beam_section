@@ -1,105 +1,123 @@
 
-# Cantilever Beam Analysis: Shear Force and Bending Moment Diagrams (Numerical Integration)<br>외팔보 해석: 전단력 선도와 굽힘모멘트 선도 (수치적분)
+# Hey, Don't Let Your Treehouse Floor Go 'D'oh!' – Bending Stress Edition<br>친구, 트리하우스 바닥이 '으악' 하지 않게 조심해! – 굽힘 응력 편
 
-* This assignment focuses on numerically calculating and plotting shear force diagrams (SFD) and bending moment diagrams (BMD) for a cantilever beam under a distributed load represented by a callback function.<br>이 과제는 함수로 주어지는 분포 하중을 받는 외팔보의 전단력선도(SFD)와 굽힘모멘트선도(BMD)를 수치적분으로 계산하여 그리는 것을 목표로 함.
+* Ever dreamt of building the raddest treehouse? Well, before you start hammering away, let's make sure that floor isn't gonna send you crashing down like a gnarly wipeout.  This assignment will teach you how to use numerical methods to calculate the bending stress on your treehouse floor supports.<br>나무 위에 멋진 놀이방을 만들어 보는 건 어떨까요? 공사를 시작하기 전에, 바닥이 무너지지 않을지 확인 부터 해 봅시다. 이 과제에서는 수치적 방법을 사용하여 아늑한 휴식처의 바닥을 지지하는 보의 굽힘 응력을 계산하는 방법을 알아봅시다.
 
-## Description<br>설명
+![Tree House](https://github.com/kangwonlee/beam_section/assets/17876446/051577ce-2f31-4ade-ac67-78122132a538)
+Can we use Simpson formula to do this?<br>심슨 공식으로 할 수 있을까요?
 
-* A cantilever beam with variable length (L) is subjected to a distributed load defined by a function `load_function()`.<br> 함수 `load_function()` 으로 주어지는 분산하중을 받고 있는 길이 `L`인 임의의 외팔보가 있다.
-* It is known that the shear force diagram (SFD) and bending moment diagram (BMD) can be calculated by integrating the distributed load function.<br>분산하중 함수를 적분하여 전단력선도(SFD)와 굽힘모멘트선도(BMD)를 계산할 수 있다.
+## Learning Objectives<br>학습 목표
 
-$$
-SFD(x) = -\int_{0}^{x} q(\tau) d\tau
-$$
+* Master numerical integration techniques like the Trapezoidal and Simpson's Rule to calculate section properties.<br>사다리꼴 공식이나 심슨 수치적분의 달인이 되어 단면 특성을 계산해 봅시다.
 
 $$
-BMD(x) = -\int_{0}^{x} SFD(\tau) d\tau
+\begin{align}
+    \bar{y} &= \frac{1}{A}\int y dA \\
+    I &= \int y^2 dA \\
+\end{align}
 $$
 
-## Implementation<br>구현
+* Become a bending stress expert by using the flexure formula to analyze your treehouse floor supports.<br>굽힘 공식으로 바닥 지지보를 해석해 봅시다.
 
-* In `beam_analysis.py` file, please implement following python functions to calculate SFD and BMD numerically using appropriate integration methods.<br>`beam_analysis.py` 파일에 아래 파이썬 함수를 구현하여 SFD와 BMD를 수치적으로 계산하시오. 적절한 적분 방법을 사용하시오.
+$$
+σ = \frac{My}{I}
+$$
 
+* Level up your Python skills to create functions that automate those calculations.<br>이러한 여러 계산을 자동화하는 함수를 만들어 보면서 파이썬 역량을 한 단계 향상시켜 봅시다.
+* Write clean, well-organized code that even Linus Torvalds would approve of.<br>리누스 토발즈도 인정할 만한 깔끔하고 잘 정리된 코드를 작성해 봅시다.
 
-| function<br>함수 | description<br>설명 |
-|:----------------:|:------------------:|
-| `calculate_shear_force()` | calculate the shear force at the given positions<br>주어진 위치에서 전단력을 계산 |
-| `calculate_bending_moment()` | calculate the bending moment at the given positions<br>주어진 위치에서 굽힘모멘트를 계산 |
+<a href="https://github.com/torvalds"><img alt="Torvalds's avatar" src="https://avatars.githubusercontent.com/u/1024025?v=4" width="120" height="120"></a>
+<br>Linus Torvalds, Linux Foundation (Let's aim for code so good, even Linus might crack a smile!)<br>리누스 토발즈, 리눅스 재단 (목표는 리누스씨 마음에도 흡족할 만큼 훌륭한 코드를 작성하는 겁니다!)
 
-* The functions will take `x_m_array` (position array), `L_m` (beam length), and `load_function_Npm()` as arguments.<br>해당 함수는 위치 좌표 array `x_m_array`, 보 길이 `L_m`, 그리고 `load_function_Npm()` 을 매개변수로 받음.
+## Your Mission, Should You Choose to Accept It:<br>다음 함수를 구현해 보세요:
 
-| argument<br>매개변수 | type<br>형 | unit<br>단위 | description<br>설명 |
-|:-----------------:|:----------:|:----------:|:------------------:|
-| `x_m_array` | `numpy.array` | m | array of positions from the free end where SFD and BMD are to be calculated<br>SFD, BMD 값을 구하고자 하는 자유단으로부터의 위치 좌표 array |
-| `L_m` | `float` | m | length of the beam<br>보의 길이 |
-| `load_function_Npm()` | `function` | N/m | load function<br>분포 하중 함수 |
+<img alt="section dimensions" src="https://github.com/kangwonlee/beam_section/assets/17876446/2ae07371-9a3d-45d7-9c73-421de6640252" style="max-width: 50%;">
 
-* Here, the load function `load_function_Npm()` will take `x_m` as an argument and return the load in N/m at that position.<br>여기서, 분포 하중 함수 `load_function_Npm()` 는 `x_m` 을 매개변수로 받아 해당 위치에서의 하중을 N/m 단위로 반환함.
+* In `beam_analysis.py`, implement the following Python functions to calculate the area, centroid, moment of inertia, and bending stress of a T-beam cross-section.<br>`beam_analysis.py` 파일에 아래 파이썬 함수를 구현하여 T형 단면의 면적, 중심, 관성 모멘트, 그리고 굽힘 응력을 계산하시오.
 
-| argument<br>매개변수 | type<br>형 | unit<br>단위 | description<br>설명 |
-|:-----------------:|:----------:|:----------:|:------------------:|
-| `x_m` | `numpy.array` | m | position(s) from the free end where the distributed load(s) to be calculated<br>분포 하중 값을 구하고자 하는 자유단으로부터의 위치 |
+| function<br>함수 | type<br>형 | unit<br>단위 | return value<br>반환값 |
+|:--------:|:-----------:|:-----------:|:-----------:|
+| `area(w0, h0, w1, h1, w2, h2):` | `float` | $m^2$ | The total area of the T-beam cross-section.<br> T형 단면의 전체 면적. |
+| `centroid_y(w0, h0, w1, h1, w2, h2):` | `float` | $m$ | The vertical distance from the bottom of the section to the neutral axis (centroid).<br> 단면의 하단으로부터 단면의 중립축(중심축)까지의 수직 거리. |
+| `moment_of_inertia(w0, h0, w1, h1, w2, h2):` | `float` | $m^4$ | The moment of inertia (I) of the beam cross-section about the neutral axis.<br>중립축 중심의 단면의 관성 모멘트(I). |
+| `bending_stress(M, w0, h0, w1, h1, w2, h2):` | `float` | $Pa$ | The maximum bending stress (σ) at the top or bottom fibers of the beam. (>0)<br> 단면의 상단 또는 하단에서의 최대 굽힘 응력(σ). (>0) |
 
-* Regarding the return values of each function, please see the table below.<br>각 함수의 반환값에 대해서는 아래 표를 참고하시오.
+* All arguments and return values would be `float`<br>모든 매개변수와 반환값은 `float`.
+* All units of length are in meters.<br>길이의 단위는 미터.
+* All units of force are in Newtons.<br>힘의 단위는 뉴턴.
+* May use `numpy` & `scipy`.<br>`numpy` & `scipy` 사용 가능.
 
-| function<br>함수 | return value<br>반환값 | type<br>형 | unit<br>단위 |
-|:----------------:|:------------------:|:------------------:|:------------------:|
-| `calculate_shear_force()` | the shear force at `x_m_array`<br>`x_m_array` 위치에서 전단력 | `numpy.array` | N |
-| `calculate_bending_moment()` | the bending moment at `x_m_array`<br>`x_m_array` 위치에서 굽힘모멘트 | `numpy.array` | Nm |
+* Also implement following two functions returning a `dict` respectivley. <br>다음 두 함수도 구현하시오. 각각 `dict`를 반환하시오.
+* `area_above_below_equal(w0, h0, w1, h1, w2, h2)`
 
-* Please see `sample.py` file for an example.<br>사용 예에 대해서는 `sample.py` 파일을 참고하시오.
-* In `beam_analysis.py` file, every python code line must belong to one of functions.<br>`beam_analysis.py` 파일에서 모든 파이썬 코드 라인은 반드시 함수 중 하나에 속해야 함.
-* Students may use `numpy`, `scipy`, or `matplotlib` for this assignment.<br>이 과제에서는 `numpy`, `scipy`, `matplotlib` 라이브러리를 사용할 수 있음.
+| return value key<br>반환값 key | type<br>형 | unit<br>단위 | value |
+|:--------:|:-----------:|:-----------:|:-----------:|
+| `'a_above'` | `float` | $m^2$ | area of the section above the centroid<br>중립축 위의 단면의 넓이. |
+| `'a_below'` | `float` | $m^2$ | area of the section below the centroid<br>중립축 아래의 단면의 넓이. |
+| `'close'` | `bool` | - | whether these two areas are close to each other?<br>두 넓이가 가까운가? |
 
+* `area_moment_above_below_equal(w0, h0, w1, h1, w2, h2)`
 
-## Grading<br>평가
+| return value key<br>반환값 key | type<br>형 |unit<br>단위 | value |
+|:--------:|:-----------:|:-----------:|:-----------:|
+| `'a_moment_above'` | `float` | $m^3$ | area moment of the section above the centroid. (>0)<br>중립축 위의 면적 모멘트. (>0) |
+| `'a_moment_below'` | `float` | $m^3$ | area moment of the section below the centroid. (>0)<br>중립축 아래의 면적 모멘트. (>0) |
+| `'close'` | `bool` | - | whether these two area moments are close to each other?<br>두 면적 모멘트가 가까운가? |
 
-|       | points<br>배점 |
-|:-----:|:-------------:|
-| python grammar<br>파이썬 문법 | 2 |
-| all lines of `beam_analysis.py` in the function<br>`beam_analysis.py` 파일에는 함수만 포함 | 1 |
-| results<br>결과값 | 2 |
+## Grading Criteria<br>평가기준
 
-## Example<br>예
+| Criteria<br>기준	| Points<br>배점 |
+|:---------:|:------:|
+| Python Grammar<br>파이썬 문법	| 1 |
+| Coding Style<br>모든 코드는 함수 안에	| 1 |
+| Intermediate Results<br>중간 결과	| 1 |
+| Final Result<br>최종 결과	| 2 |
+
+* Make sure your code passes all the tests in GitHub Actions – it's like getting a thumbs-up! 👍<br>코드를 commit 한 후 저장소 Actions 에서 테스트를 모두 통과 하는지 확인 바랍니다. 👍
+
+## Need a Hand?<br>힌트가 필요하다면
+
+* Check out the `sample.py` file for some righteous examples on how to use your functions.<br>함수 사용 예는 `sample.py` 파일을 참고하세요.
 
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
 import beam_analysis as beam
 
-x_begin = 0.0
-x_end = 3.0
+w0_m, h0_m = 50e-3, 12e-3
+w1_m, h1_m = 7.5e-3, 70e-3
+w2_m, h2_m = 90e-3, 10e-3
 
-x_m_array = np.linspace(x_begin, x_end)
+M_Nm = 100
 
-# constant distributed load function
-# 균일 분포 하중 함수
-# q(x) = 1000.0 N/m
-def w_Npm(x_m):
-    return 1000.0
-# if interested, please try other functions
-# 관심이 있다면 다른 함수를 시도해보세요
+area_m2 = beam.area(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+centroid_m = beam.centroid_y(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+moment_m4 = beam.moment_of_inertia(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+bending_stress_max_pa = beam.bending_stress(M_Nm, w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
 
-# calculate SFD and BMD
+print(f'Section area: {area_m2:.6g} m^2')
+print(f'Section neutral axis: {centroid_m:.6g} m')
+print(f'Section moment of inertia about the neutral axis: {moment_m4:.6g} m^4')
+print(f'Max bending stress: {bending_stress_max_pa:.6g} Pa')
 
-sfd = beam.calculate_shear_force(
-    x_m_array, x_end, w_Npm
-)
+a_above_below = area_above_below_equal(w0, h0, w1, h1, w2, h2)
 
-bmd = beam.calculate_shear_force(
-    x_m_array, x_end, w_Npm
-)
+print(f"Area above the centroid {a_above_above['a_above']:.6g} m^2")
+print(f"Area below the centroid {a_above_below['a_below']:.6g} m^2")
+print(f"Are these areas close? {a_above_below['close']}")
 
-plt.subplot(2, 1, 1)
-plt.plot(x_m_array, sfd, label='SFD')
-plt.title('SFD (N)')
-plt.grid()
+q_above_below = area_moment_above_below_equal(w0, h0, w1, h1, w2, h2)
 
-plt.subplot(2, 1, 2)
-plt.plot(x_m_array, bmd, label='BMD')
-plt.title('BMD (Nm)')
-plt.xlabel('x (m)')
-plt.grid()
+print(f"Area moment above the centroid {a_above_above['a_moment_above']:.6g} m^2")
+print(f"Area moment below the centroid {a_above_below['a_moment_below']:.6g} m^2")
+print(f"Are these area moments close? {a_above_below['close']}")
 
-plt.savefig('result.png')
+plt.fill_between([(-0.5) * w0_m, (0.5) * w0_m], [0, 0], [h0_m, h0_m], color='blue', alpha=0.5)
+plt.fill_between([(-0.5) * w1_m, (0.5) * w1_m], [h0_m, h0_m], [h1_m+h0_m, h1_m+h0_m], color='blue', alpha=0.5)
+plt.fill_between([(-0.5) * w2_m, (0.5) * w2_m], [h1_m+h0_m, h1_m+h0_m], [h2_m+h1_m+h0_m, h2_m+h1_m+h0_m], color='blue', alpha=0.5)
+plt.axhline(y=centroid_m, color='red', linestyle='--')
+plt.grid(True)
+plt.show()
 ```
+
+ So, what are you waiting for? Let's build a treehouse that's so epic that even Bart would envy! 🍕<br>이제 나무 위에 바트도 부러워 할 역대급 놀이방을 만들어 봅시다! 🍕

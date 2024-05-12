@@ -1,13 +1,15 @@
-import random
+import itertools
+import math
 import pathlib
+import random
 import sys
-from typing import Tuple, Callable
 
 
-import matplotlib.pyplot as plt
-import numpy as np
-import numpy.testing as nt
+from typing import Dict, Tuple
+
+
 import pytest
+
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.absolute()))
 
@@ -16,258 +18,411 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.absolute()))
 import beam_analysis as ba
 
 
-SFD = Callable[[float], float]
-BMD = Callable[[float], float]
-LOAD = Callable[[float], float]
-
-FUNCS = Tuple[LOAD, SFD, BMD]
+@pytest.fixture
+def width_m() -> Tuple[float]:
+    return (
+        random.normalvariate(50e-3, 10e-3),
+        random.normalvariate(7.5e-3, 1.5e-3),
+        random.normalvariate(90e-3, 18e-3)
+    )
 
 
 @pytest.fixture
-def beam_length_m() -> float:
-    return random.uniform(0.1, 2)  # Sample beam length
+def height_m() -> Tuple[float]:
+    return (
+        random.normalvariate(12e-3, 2.5e-3),
+        random.normalvariate(70e-3, 1.4e-3),
+        random.normalvariate(10e-3, 2e-3)
+    )
 
 
 @pytest.fixture
-def n_interval() -> int:
-    return random.randint(100, 200) * 2
+def M_Nm() -> float:
+    return random.normalvariate(100, 10)
 
 
 @pytest.fixture
-def x_m_array(beam_length_m:float, n_interval:int) -> np.ndarray:
-    return np.linspace(0, beam_length_m, n_interval+1)  # Array of positions for calculation
+def area_m2(width_m:float, height_m:float) -> Tuple[float]:
+    return tuple(
+        map(
+            lambda x_y: x_y[0] * x_y[1],
+            zip(
+                width_m, height_m
+            )
+        )
+    )
 
 
 @pytest.fixture
-def a() -> float:
-    return random.uniform(0.1, 2)
+def tot_area_m2(area_m2:Tuple[float]) -> float:
+    return sum(area_m2)
 
 
 @pytest.fixture
-def b() -> float:
-    return random.uniform(0.1, 2)
+def centroid_m(height_m:Tuple[float]) -> Tuple[float]:
+    return (
+        height_m[0]*0.5,
+        height_m[0] + height_m[1]*0.5,
+        height_m[0] + height_m[1] + height_m[2]*0.5,
+    )
+
+
+def test_centroid_m(centroid_m:Tuple[float], height_m:Tuple[float]) -> Tuple[float]:
+    # is centroid_m[i] is located at the half of the i'th area?
+    assert math.isclose(centroid_m[0]*2, height_m[0])
+    assert math.isclose((centroid_m[1] - height_m[0])*2, height_m[1])
+    assert math.isclose((centroid_m[2] - (height_m[0]+height_m[1]))*2, height_m[2])
 
 
 @pytest.fixture
-def c() -> float:
-    return random.uniform(0.1, 2)
+def expected_centroid_m(
+        area_m2:Tuple[float], centroid_m:Tuple[float],
+        tot_area_m2:float,
+        ) -> float:
+    return sum(
+        map(
+            lambda a_y: a_y[0] * a_y[1],
+            zip(area_m2, centroid_m)
+        )
+    ) / tot_area_m2
 
 
 @pytest.fixture
-def half_a(a:float) -> float:
-    return 0.5*a
+def expected_a_above_below(
+    expected_centroid_m:float,
+    area_m2:Tuple[float],
+    width_m:Tuple[float],
+    height_m:Tuple[float],) -> Dict[str, float]:
+    h1_below_m = expected_centroid_m - height_m[0]
+    area_below_m2 = area_m2[0] + h1_below_m * width_m[1]
+    h1_above_m = height_m[0] + height_m[1] - expected_centroid_m
+    area_above_m2 = area_m2[2] + h1_above_m * width_m[1]
 
-
-@pytest.fixture
-def half_b(b:float) -> float:
-    return 0.5*b
-
-
-@pytest.fixture
-def gen_case_const(a:float, half_a:float) -> FUNCS:
-    # load -----------------------------
-    def load(x:np.ndarray) -> np.ndarray:
-        return a * np.ones_like(x)
-
-    # sfd ------------------------------
-    def sfd(x:np.ndarray) -> np.ndarray:
-        return a*x
-
-    # bmd ------------------------------
-    def bmd(x:np.ndarray) -> np.ndarray:
-        return half_a*(x**2)
-    return load, sfd, bmd
-
-
-@pytest.fixture
-def gen_case_linear(
-        a:float, b:float,
-        half_a:float, half_b:float,
-    ) -> FUNCS:
-    # load -----------------------------
-    def load(x:np.ndarray) -> np.ndarray:
-        return a*x + b
-
-    # sfd ------------------------------
-    def sfd(x:np.ndarray) -> np.ndarray:
-        return half_a*(x**2) + b*x
-
-    a_sixth = (1.0/6.0)*a
-    # bmd ------------------------------
-    def bmd(x:np.ndarray) -> np.ndarray:
-        return a_sixth*(x**3) + half_b*(x**2)
-
-    return load, sfd, bmd
-
-
-@pytest.fixture
-def gen_case_quadratic(
-        a:float, b:float, c:float,
-        half_b:float,
-    ) -> FUNCS:
-    # load -----------------------------
-    def load(x:np.ndarray) -> np.ndarray:
-        return a*(x**2) + b*x + c
-
-    a_third = (1.0/3.0)*a
-
-    # sfd ------------------------------
-    def sfd(x:np.ndarray) -> np.ndarray:
-        return a_third*(x**3) + half_b*(x**2) + c*x
-
-    a_twelfth = (1.0/12.0)*a
-    b_sixth = (1.0/6.0)*b
-    half_c = 0.5*c
-
-    # bmd ------------------------------
-    def bmd(x:np.ndarray) -> np.ndarray:
-        return a_twelfth*(x**4) + b_sixth*(x**3) + half_c*(x**2)
-    return load, sfd, bmd
-
-
-@pytest.fixture
-def gen_case_sinusoidal(
-        a:float, b:float, c:float,
-        beam_length_m:float,
-    ) -> FUNCS:
-    freq = (2*np.pi*b)/beam_length_m
-
-    # load -----------------------------
-    def load(x:np.ndarray) -> np.ndarray:
-        return a*np.sin(freq*x + c)
-
-    a_freq = a/freq
-    a_freq_cos_c = a_freq * np.cos(c)
-    # sfd ------------------------------
-    def sfd(x:np.ndarray) -> np.ndarray:
-        return (a_freq_cos_c - a_freq*np.cos(freq*x + c))
-
-    a_freq2 = a/(freq*freq)
-    a_freq2_sin_c = a_freq2 * np.sin(c)
-    # bmd ------------------------------
-    def bmd(x:np.ndarray) -> np.ndarray:
-        return (a_freq_cos_c*x + a_freq2_sin_c - a_freq2*np.sin(freq*x + c))
-
-    return load, sfd, bmd
-
-
-@pytest.fixture
-def gen_case_exp(
-        a:float, b:float, c:float,
-    ) -> FUNCS:
-    # load -----------------------------
-    def load(x:np.ndarray) -> np.ndarray:
-        return a*np.exp(-b*x + c)
-
-    a_b = a/b
-    a_bb = a/(b*b)
-    a_b_exp_c = a_b * np.exp(c)
-    # sfd ------------------------------
-    def sfd(x:np.ndarray) -> np.ndarray:
-        return (a_b_exp_c - a_b*np.exp(-b*x + c))
-
-    a_bb_exp_c = a_bb * np.exp(c)
-    # bmd ------------------------------
-    def bmd(x:np.ndarray) -> np.ndarray:
-        return (a_b_exp_c*x - a_bb_exp_c + a_bb*np.exp(-b*x + c))
-
-    return load, sfd, bmd
-
-
-@pytest.fixture(params=['const', 'linear', 'quadratic', 'sinusoidal', 'exp'])
-def load_function_type(request) -> str:
-    return request.param
-
-
-@pytest.fixture
-def load_sfd_bmd(load_function_type, gen_case_const, gen_case_linear, gen_case_quadratic, gen_case_sinusoidal, gen_case_exp) -> FUNCS:
-    d = {
-        'const': gen_case_const,
-        'linear': gen_case_linear,
-        'quadratic': gen_case_quadratic,
-        'sinusoidal': gen_case_sinusoidal,
-        'exp': gen_case_exp,
+    return {
+        'a_above': area_above_m2,
+        'a_below': area_below_m2,
+        'close': math.isclose(area_above_m2, area_below_m2)
     }
-    return d[load_function_type]
 
 
 @pytest.fixture
-def result_sfd(load_sfd_bmd:FUNCS, beam_length_m:float, x_m_array:np.ndarray) -> np.ndarray:
-    return ba.calculate_shear_force(x_m_array, beam_length_m, load_sfd_bmd[0])
+def expected_a_moment_above_below(
+    expected_centroid_m:float,
+    area_m2:Tuple[float],
+    width_m:Tuple[float],
+    centroid_m:Tuple[float],
+    height_m:Tuple[float],) -> Dict[str, float]:
+
+    h1_below_m = expected_centroid_m - height_m[0]
+    area_moment_below_m3 = (
+          area_m2[0]*(expected_centroid_m - centroid_m[0])
+        + h1_below_m * width_m[1] * (0.5) * h1_below_m)
+
+    h1_above_m = height_m[0] + height_m[1] - expected_centroid_m
+    area_moment_above_m3 = (
+          area_m2[2]*(centroid_m[2] - expected_centroid_m)
+        + h1_above_m * width_m[1] * (0.5) * h1_above_m)
+
+    return {
+        'a_moment_above': area_moment_below_m3,
+        'a_moment_below': area_moment_above_m3,
+        'close': math.isclose(area_moment_below_m3, area_moment_above_m3)
+    }
+
+
+def test_expected_centroid(
+        expected_a_moment_above_below:Dict[str, float],
+    ):
+    assert math.isclose(
+        expected_a_moment_above_below['a_moment_above'],
+        expected_a_moment_above_below['a_moment_below']
+    )
 
 
 @pytest.fixture
-def expected_sfd(load_sfd_bmd:FUNCS, x_m_array:np.ndarray) -> np.ndarray:
-    return load_sfd_bmd[1](x_m_array)
-
-
-def test_sfd_type(result_sfd:np.ndarray):
-    assert isinstance(result_sfd, np.ndarray), (
-        f"Expected np.ndarray, but got {type(result_sfd)}\n"
-        f"numpy array 를 반환할 것을 예상했으나 {type(result_sfd)} 이(가) 반환됨"
+def I_m4(width_m:float, height_m:float) -> Tuple[float]:
+    return tuple(
+        map(
+            lambda x_y: x_y[0] * (x_y[1]**3) / 12.0,
+            zip(
+                width_m, height_m
+            )
+        )
     )
-
-
-def test_sfd_shape(result_sfd:np.ndarray, x_m_array:np.ndarray):
-    assert result_sfd.shape == x_m_array.shape, (
-        f"Expected shape {x_m_array.shape}, but got {result_sfd.shape}\n"
-        f"반환된 array 길이가 {x_m_array.shape} 일 것으로 예상했지만 {result_sfd.shape} (으)로 반환됨"
-    )
-
-
-def test_calculate_shear_force(load_function_type:str, result_sfd:np.ndarray, expected_sfd:np.ndarray, x_m_array:np.ndarray):
-    try:
-        nt.assert_allclose(result_sfd, expected_sfd, rtol=1e-5, atol=1e-5)  # Adjust tolerances
-    except AssertionError as e:
-        plt.clf()
-        plt.plot(x_m_array, result_sfd, label=f'{load_function_type}calculated_sfd')
-        plt.plot(x_m_array, expected_sfd, label=f'{load_function_type}expected_sfd')
-        plt.legend(loc=0)
-        plt.xlabel('x (m)')
-        plt.ylabel('SFD (N)')
-        plt.grid(True)
-        plt.savefig(load_function_type+'.png')
-        raise e
 
 
 @pytest.fixture
-def result_bmd(load_sfd_bmd:FUNCS, beam_length_m:float, x_m_array:np.ndarray) -> np.ndarray:
-    return ba.calculate_bending_moment(x_m_array, beam_length_m, load_sfd_bmd[0])
+def tot_I_m4(
+        I_m4:Tuple[float],
+        area_m2:Tuple[float],
+        centroid_m:Tuple[float],
+        expected_centroid_m:float,
+    ) -> float:
+    return sum(
+        map(
+            lambda i_a_y: (
+                i_a_y[0] + i_a_y[1] * (
+                    expected_centroid_m - i_a_y[2]
+                )**2
+            ),
+            zip(
+                I_m4, area_m2, centroid_m
+            )
+        )
+    )
 
 
 @pytest.fixture
-def expected_bmd(load_sfd_bmd:Tuple[str, FUNCS], x_m_array:np.ndarray) -> np.ndarray:
-    return load_sfd_bmd[2](x_m_array)
-
-
-def test_bmd_type(result_bmd:np.ndarray):
-    assert isinstance(result_bmd, np.ndarray), (
-        f"Expected np.ndarray, but got {type(result_bmd)}\n"
-        f"numpy array 를 반환할 것을 예상했으나 {type(result_bmd)} 이(가) 반환됨"
+def wh(width_m:Tuple[float], height_m:Tuple[float]) -> Tuple[float]:
+    return tuple(
+        itertools.chain.from_iterable(
+            zip(width_m, height_m)
+        )
     )
 
 
-def test_bmd_shape(result_bmd:np.ndarray, x_m_array:np.ndarray):
-    assert result_bmd.shape == x_m_array.shape, (
-        f"Expected shape {x_m_array.shape}, but got {result_sfd.shape}\n"
-        f"반환된 array 길이가 {x_m_array.shape} 일 것으로 예상했지만 {result_sfd.shape} (으)로 반환됨"
+@pytest.fixture
+def result_area(wh:Tuple[float]):
+    return ba.area(*wh)
+
+
+def test_result_area_float(result_area:float):
+    assert isinstance(result_area, float), (
+        '\n'
+        f"returned value is not a float : {result_area} {type(result_area)}\n"
+        f"반환값이 float가 아님 : {result_area} {type(result_area)}\n"
     )
 
 
-def test_calculate_bending_moment(load_function_type:str, result_bmd:np.ndarray, expected_bmd:np.ndarray, x_m_array:np.ndarray):
-    try:
-        nt.assert_allclose(result_bmd, expected_bmd, rtol=1e-5, atol=1e-5)  # Adjust tolerances
-    except AssertionError as e:
-        plt.clf()
-        plt.plot(x_m_array, result_bmd, label=f'{load_function_type} calculated_bmd')
-        plt.plot(x_m_array, expected_bmd, label=f'{load_function_type} expected_bmd')
-        plt.legend(loc=0)
-        plt.xlabel('x (m)')
-        plt.ylabel('BMD (Nm)')
-        plt.grid(True)
-        plt.savefig(load_function_type+'.png')
-        plt.close()
-        raise e
+def test_result_area_value(result_area:float, tot_area_m2:float):
+    assert math.isclose(result_area, tot_area_m2, rel_tol=1e-3), (
+        '\n'
+        f"returned value {result_area:g} is not close to expected {tot_area_m2:g}\n"
+        f"반환값 {result_area:g} 이(가) 예상 값 {tot_area_m2:g} 과 거리가 있음\n"
+    )
+
+
+@pytest.fixture
+def result_centroid_y(wh:Tuple[float]):
+    return ba.centroid_y(*wh)
+
+
+def test_result_centroid_y_float(result_centroid_y:float):
+    assert isinstance(result_centroid_y, float), (
+        '\n'
+        f"returned value is not a float : {result_centroid_y} {type(result_centroid_y)}\n"
+        f"반환값이 float가 아님 : {result_centroid_y} {type(result_centroid_y)}\n"
+    )
+
+
+def test_result_centroid_y_value(
+        result_centroid_y:float,
+        expected_centroid_m:float):
+    assert math.isclose(result_centroid_y, expected_centroid_m, rel_tol=1e-3), (
+        '\n'
+        f"returned value {result_centroid_y:g} is not close to expected {expected_centroid_m:g}\n"
+        f"반환값 {result_centroid_y:g} 이(가) 예상 값 {expected_centroid_m:g} 과 거리가 있음\n"
+    )
+
+
+@pytest.fixture
+def result_area_above_below_equal(wh:Tuple[float]):
+    return ba.area_above_below_equal(*wh)
+
+
+def test_result_area_above_below_type(result_area_above_below_equal:float):
+    assert isinstance(result_area_above_below_equal, dict), (
+        '\n'
+        "returned value is not a dict : "
+        f"{result_area_above_below_equal} "
+        f"{type(result_area_above_below_equal)}\n"
+        "반환값이 dict 가 아님 : "
+        f"{result_area_above_below_equal} "
+        f"{type(result_area_above_below_equal)}\n"
+    )
+
+
+def test_result_area_above_below_keys(
+        result_area_above_below_equal:Dict[str, float],
+        expected_a_above_below:Dict[str, float]):
+
+    returned_keys = list(set(result_area_above_below_equal.keys()))
+    returned_keys.sort()
+
+    expecteded_keys = list(set(expected_a_above_below.keys()))
+    expecteded_keys.sort()
+
+    assert returned_keys == expecteded_keys, (
+        '\n'
+        f"returned keys {returned_keys} different from expected {expecteded_keys}.\n"
+        f"반환값의 key {returned_keys} 이(가) 예상과 다름 {expecteded_keys}.\n"
+    )
+
+
+def test_result_area_above_below_value_above(
+        result_area_above_below_equal:Dict[str, float],
+        expected_a_above_below:Dict[str, float]):
+
+    result_a_above = result_area_above_below_equal['a_above']
+    expected_a_above = expected_a_above_below['a_above']
+
+    assert math.isclose(result_a_above, expected_a_above, rel_tol=1e-3), (
+        '\n'
+        f"returned value {result_a_above:g} is not close to expected {expected_a_above:g}\n"
+        f"반환값 {result_a_above:g} 이(가) 예상 값 {expected_a_above:g} 과 거리가 있음\n"
+    )
+
+
+def test_result_area_above_below_value_below(
+        result_area_above_below_equal:Dict[str, float],
+        expected_a_above_below:Dict[str, float]):
+
+    result_a_below = result_area_above_below_equal['a_below']
+    expected_a_below = expected_a_above_below['a_below']
+
+    assert math.isclose(result_a_below, expected_a_below, rel_tol=1e-3), (
+        '\n'
+        f"returned value {result_a_below:g} is not close to expected {expected_a_below:g}\n"
+        f"반환값 {result_a_below:g} 이(가) 예상 값 {expected_a_below:g} 과 거리가 있음\n"
+    )
+
+
+def test_result_area_above_below_value_close(
+        result_area_above_below_equal:Dict[str, float],
+        expected_a_above_below:Dict[str, float]):
+
+    result_close = result_area_above_below_equal['close']
+    expected_close = expected_a_above_below['close']
+
+    assert result_close == expected_close, (
+        '\n'
+        f"returned value {expected_close} is not equal to expected {expected_close:g}\n"
+        f"반환값 {expected_close} 이(가) 예상 값 {expected_close:g} 과 같지 않음\n"
+    )
+
+
+@pytest.fixture
+def result_area_moment_above_below_equal(wh:Tuple[float]):
+    return ba.area_moment_above_below_equal(*wh)
+
+
+def test_result_area_moment_above_below_equal_type(
+        result_area_moment_above_below_equal:float):
+    assert isinstance(result_area_moment_above_below_equal, dict), (
+        '\n'
+        f"returned value is not a dict : {result_area_moment_above_below_equal} "
+        f"{type(result_area_moment_above_below_equal)}\n"
+        f"반환값이 dict 가 아님 : {result_area_moment_above_below_equal} "
+        f"{type(result_area_moment_above_below_equal)}\n"
+    )
+
+
+def test_result_area_moment_above_below_equal_keys(
+        result_area_moment_above_below_equal:Dict[str, float],
+        expected_a_moment_above_below:Dict[str, float]):
+
+    returned_keys = list(set(result_area_moment_above_below_equal.keys()))
+    returned_keys.sort()
+
+    expecteded_keys = list(set(expected_a_moment_above_below.keys()))
+    expecteded_keys.sort()
+
+    assert returned_keys == expecteded_keys, (
+        '\n'
+        f"returned keys {returned_keys} different from expected {expecteded_keys}.\n"
+        f"반환값의 key {returned_keys} 이(가) 예상과 다름 {expecteded_keys}.\n"
+    )
+
+
+def test_result_area_moment_above_below_equal_value_above(
+        result_area_moment_above_below_equal:Dict[str, float],
+        expected_a_moment_above_below:Dict[str, float]):
+
+    result_a_above = result_area_moment_above_below_equal['a_moment_above']
+    expected_a_above = expected_a_moment_above_below['a_moment_above']
+
+    assert math.isclose(result_a_above, expected_a_above, rel_tol=1e-3), (
+        '\n'
+        f"returned value {result_a_above:g} is not close to expected {expected_a_above:g}\n"
+        f"반환값 {result_a_above:g} 이(가) 예상 값 {expected_a_above:g} 과 거리가 있음\n"
+    )
+
+
+def test_result_area_moment_above_below_equal_value_below(
+        result_area_moment_above_below_equal:Dict[str, float],
+        expected_a_moment_above_below:Dict[str, float]):
+
+    result_a_below = result_area_moment_above_below_equal['a_moment_below']
+    expected_a_below = expected_a_moment_above_below['a_moment_below']
+
+    assert math.isclose(result_a_below, expected_a_below, rel_tol=1e-3), (
+        '\n'
+        f"returned value {result_a_below:g} is not close to expected {expected_a_below:g}\n"
+        f"반환값 {result_a_below:g} 이(가) 예상 값 {expected_a_below:g} 과 거리가 있음\n"
+    )
+
+
+def test_result_area_moment_above_below_equal_value_close(
+        result_area_moment_above_below_equal:Dict[str, float],
+        expected_a_moment_above_below:Dict[str, float]):
+
+    result_close = result_area_moment_above_below_equal['close']
+    expected_close = expected_a_moment_above_below['close']
+
+    assert result_close == expected_close, (
+        '\n'
+        f"returned value {expected_close} is not equal to expected {expected_close:g}\n"
+        f"반환값 {expected_close}  예상 값 {expected_close:g} 과 같지 않음\n"
+    )
+
+
+@pytest.fixture
+def result_moment_of_inertia(wh:Tuple[float]):
+    return ba.moment_of_inertia(*wh)
+
+
+def test_result_moment_of_inertia_float(result_moment_of_inertia:float):
+    assert isinstance(result_moment_of_inertia, float), (
+        '\n'
+        f"returned value is not a float : {result_moment_of_inertia} {type(result_moment_of_inertia)}\n"
+        f"반환값이 float가 아님 : {result_moment_of_inertia} {type(result_moment_of_inertia)}\n"
+    )
+
+
+def test_result_moment_of_inertia_value(result_moment_of_inertia:float, tot_I_m4:float):
+    assert math.isclose(result_moment_of_inertia, tot_I_m4, rel_tol=1e-3), (
+        '\n'
+        f"returned value {result_moment_of_inertia:g} is not close to expected {tot_I_m4:g}\n"
+        f"반환값 {result_moment_of_inertia:g} 이(가) 예상 값 {tot_I_m4:g} 과 거리가 있음\n"
+    )
+
+
+@pytest.fixture
+def result_bending_stress(M_Nm:float, wh:Tuple[float]):
+    return ba.bending_stress(M_Nm, *wh)
+
+
+@pytest.fixture
+def expected_bending_stress_Pa(M_Nm:float, height_m:Tuple[float], tot_I_m4:float, expected_centroid_m:float):
+    return max(abs(M_Nm * expected_centroid_m / tot_I_m4), abs(M_Nm * (sum(height_m) - expected_centroid_m) / tot_I_m4))
+
+
+def test_bending_stress_type(result_bending_stress:float):
+    assert isinstance(result_bending_stress, float), (
+        '\n'
+        f"returned value is not a float : {result_bending_stress} {type(result_bending_stress)}\n"
+        f"반환값이 float가 아님 : {result_bending_stress} {type(result_bending_stress)}\n"
+    )
+
+
+def test_result_result_bending_stress_value(
+        result_bending_stress:float,
+        expected_bending_stress_Pa:float):
+    assert math.isclose(result_bending_stress, expected_bending_stress_Pa, rel_tol=1e-3), (
+        '\n'
+        f"returned value {result_bending_stress:g} is not close to expected {expected_bending_stress_Pa:g}\n"
+        f"반환값 {result_bending_stress:g} 이(가) 예상 값 {expected_bending_stress_Pa:g} 과 거리가 있음\n"
+    )
 
 
 if "__main__" == __name__:

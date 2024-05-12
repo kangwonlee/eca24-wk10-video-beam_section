@@ -35,7 +35,7 @@ def test_module(py_file:pathlib.Path):
         if isinstance(node, ast.Import):
             for alias in node.names:
                 logger.info(f"Import: {alias.name}")
-                if not(alias.name.startswith('numpy') or alias.name.startswith('scipy') or alias.name.startswith('matplotlib')):
+                if not(any(map(lambda m:alias.name.startswith(m), ('math', 'numpy', 'scipy', 'matplotlib')))):
                     pytest.fail(f"tried to import {alias.name} in {py_file.relative_to(proj_folder)}")
         elif isinstance(node, ast.ImportFrom):
             if node.module == "numpy":
