@@ -29,24 +29,31 @@ def sample_main():
     print(f"Area moment below the centroid {q_above_below['a_moment_below']:.6g} m^2")
     print(f"Are these area moments close? {q_above_below['close']}")
 
-    plt.fill_between(
+    ax = plt.gca()
+    ax = plot_section(ax, centroid_m, w0_m, w1_m, w2_m, h0_m, h1_m, h2_m)
+
+    plt.savefig('section.png')
+
+
+def plot_section(ax, centroid_m, w0_m, w1_m, w2_m, h0_m, h1_m, h2_m):
+    ax.fill_between(
         x=[(-0.5) * w0_m, (0.5) * w0_m],
         y1=[0, 0],
         y2=[h0_m, h0_m],
         color='blue', alpha=0.5)
-    plt.fill_between(
+    ax.fill_between(
         x=[(-0.5) * w1_m, (0.5) * w1_m],
         y1=[h0_m, h0_m],
         y2=[h1_m+h0_m, h1_m+h0_m],
         color='blue', alpha=0.5)
-    plt.fill_between(
+    ax.fill_between(
         x=[(-0.5) * w2_m, (0.5) * w2_m],
         y1=[h1_m+h0_m, h1_m+h0_m],
         y2=[h2_m+h1_m+h0_m, h2_m+h1_m+h0_m],
         color='blue', alpha=0.5)
-    plt.axhline(y=centroid_m, color='red', linestyle='--')
-    plt.grid(True)
-    plt.savefig('section.png')
+    ax.axhline(y=centroid_m, color='red', linestyle='--')
+    ax.grid(True)
+    ax.axis('equal')
 
 
 if __name__ == "__main__":

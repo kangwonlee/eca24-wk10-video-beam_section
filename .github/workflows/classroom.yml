@@ -1,0 +1,98 @@
+name: Autograding Tests
+on:
+  - push
+  - workflow_dispatch
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Create and Activate Virtual Environment
+      run: |
+        python -m venv test-env
+        source test-env/bin/activate
+        echo $VIRTUAL_ENV
+
+    - name: Get pip cache dir
+      id: pip-cache
+      run: |
+        source test-env/bin/activate
+        echo $VIRTUAL_ENV
+        echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT
+
+    - name: pip cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pip-cache.outputs.dir }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+  
+    - name: Setup test environment
+      id: setup-env
+      run: |
+        source test-env/bin/activate
+        echo $VIRTUAL_ENV
+        pip install -r requirements.txt
+
+    - name: check grammar
+      id: check-grammar
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: check grammar
+        setup-command: ". test-env/bin/activate && echo $VIRTUAL_ENV && python -m pip list"
+        command: ". test-env/bin/activate && python -m pytest tests/test_grammar.py"
+        timeout: 1
+        max-score: 1
+    - name: all lines in the function
+      id: all-lines-in-the-function
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: all lines in the function
+        setup-command: ". test-env/bin/activate && echo $VIRTUAL_ENV && python -m pip list"
+        command: ". test-env/bin/activate && python -m pytest tests/test_all_lines_in_the_function.py"
+        timeout: 1
+        max-score: 1
+    - name: test result
+      id: test-result
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test result
+        setup-command: ". test-env/bin/activate && echo $VIRTUAL_ENV && python -m pip list"
+        command: ". test-env/bin/activate && python -m pytest -n auto tests/test_results.py"
+        timeout: 2
+        max-score: 2
+    - name: test comparison
+      id: test-comparison
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test comparison
+        setup-command: ". test-env/bin/activate && echo $VIRTUAL_ENV && python -m pip list"
+        command: ". test-env/bin/activate && python -m pytest -n auto tests/test_comparison.py"
+        timeout: 2
+        max-score: 1
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        CHECK-GRAMMAR_RESULTS: "${{steps.check-grammar.outputs.result}}"
+        ALL-LINES-IN-THE-FUNCTION_RESULTS: "${{steps.all-lines-in-the-function.outputs.result}}"
+        TEST-COMPARISON_RESULTS: "${{steps.test-comparison.outputs.result}}"
+        TEST-RESULT_RESULTS: "${{steps.test-result.outputs.result}}"
+      with:
+        runners: check-grammar,all-lines-in-the-function,test-result,test-comparison
+    - name: upload pngs as artifacts
+      id: png-artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: plots
+        path: ./*.png
+        retention-days: 21
+        overwrite: true
