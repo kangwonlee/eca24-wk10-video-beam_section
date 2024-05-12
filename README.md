@@ -31,7 +31,7 @@ $$
 
 ## Your Mission, Should You Choose to Accept It:<br>다음 함수를 구현해 보세요:
 
-<img alt="section dimensions" src="https://github.com/kangwonlee/beam_section/assets/17876446/2ae07371-9a3d-45d7-9c73-421de6640252" style="max-width: 50%;">
+<img alt="section dimensions" src="https://github.com/kangwonlee/beam_section/assets/17876446/2ae07371-9a3d-45d7-9c73-421de6640252" width="50%">
 
 * In `beam_analysis.py`, implement the following Python functions to calculate the area, centroid, moment of inertia, and bending stress of a T-beam cross-section.<br>`beam_analysis.py` 파일에 아래 파이썬 함수를 구현하여 T형 단면의 면적, 중심, 관성 모멘트, 그리고 굽힘 응력을 계산하시오.
 
