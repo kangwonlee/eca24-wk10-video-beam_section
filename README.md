@@ -37,10 +37,10 @@ $$
 
 | function<br>함수 | type<br>형 | unit<br>단위 | return value<br>반환값 |
 |:--------:|:-----------:|:-----------:|:-----------:|
-| `area(w0, h0, w1, h1, w2, h2):` | `float` | $m^2$ | The total area of the T-beam cross-section.<br> T형 단면의 전체 면적 |
-| `centroid_y(w0, h0, w1, h1, w2, h2):` | `float` | $m$ | The vertical distance from the bottom of the section to the neutral axis (centroid).<br> 단면의 하단으로부터 단면의 중립축(중심축)까지의 수직 거리 |
-| `moment_of_inertia(w0, h0, w1, h1, w2, h2):` | `float` | $m^4$ | The moment of inertia (I) of the beam cross-section about the neutral axis.<br>중립축 중심의 단면의 관성 모멘트(I) |
-| `bending_stress(M, w0, h0, w1, h1, w2, h2):` | `float` | $Pa$ | The maximum bending stress (σ) at the top or bottom fibers of the beam.<br> 단면의 상단 또는 하단에서의 최대 굽힘 응력(σ) |
+| `area(w0, h0, w1, h1, w2, h2):` | `float` | $m^2$ | The total area of the T-beam cross-section.<br> T형 단면의 전체 면적. |
+| `centroid_y(w0, h0, w1, h1, w2, h2):` | `float` | $m$ | The vertical distance from the bottom of the section to the neutral axis (centroid).<br> 단면의 하단으로부터 단면의 중립축(중심축)까지의 수직 거리. |
+| `moment_of_inertia(w0, h0, w1, h1, w2, h2):` | `float` | $m^4$ | The moment of inertia (I) of the beam cross-section about the neutral axis.<br>중립축 중심의 단면의 관성 모멘트(I). |
+| `bending_stress(M, w0, h0, w1, h1, w2, h2):` | `float` | $Pa$ | The maximum bending stress (σ) at the top or bottom fibers of the beam. (>0)<br> 단면의 상단 또는 하단에서의 최대 굽힘 응력(σ). (>0) |
 
 * All arguments and return values would be `float`<br>모든 매개변수와 반환값은 `float`.
 * All units of length are in meters.<br>길이의 단위는 미터.
@@ -52,16 +52,16 @@ $$
 
 | return value key<br>반환값 key | type<br>형 | unit<br>단위 | value |
 |:--------:|:-----------:|:-----------:|:-----------:|
-| `'a_above'` | `float` | $m^2$ | area of the section above the centroid<br>중립축 위의 단면의 넓이 |
-| `'a_below'` | `float` | $m^2$ | area of the section below the centroid<br>중립축 아래의 단면의 넓이 |
+| `'a_above'` | `float` | $m^2$ | area of the section above the centroid<br>중립축 위의 단면의 넓이. |
+| `'a_below'` | `float` | $m^2$ | area of the section below the centroid<br>중립축 아래의 단면의 넓이. |
 | `'close'` | `bool` | - | whether these two areas are close to each other?<br>두 넓이가 가까운가? |
 
 * `area_moment_above_below_equal(w0, h0, w1, h1, w2, h2)`
 
 | return value key<br>반환값 key | type<br>형 |unit<br>단위 | value |
 |:--------:|:-----------:|:-----------:|:-----------:|
-| `'a_moment_above'` | `float` | $m^3$ | area moment of the section above the centroid (>0)<br>중립축 위의 면적 모멘트 (>0) |
-| `'a_moment_below'` | `float` | $m^3$ | area moment of the section below the centroid (>0)<br>중립축 아래의 면적 모멘트 (>0) |
+| `'a_moment_above'` | `float` | $m^3$ | area moment of the section above the centroid. (>0)<br>중립축 위의 면적 모멘트. (>0) |
+| `'a_moment_below'` | `float` | $m^3$ | area moment of the section below the centroid. (>0)<br>중립축 아래의 면적 모멘트. (>0) |
 | `'close'` | `bool` | - | whether these two area moments are close to each other?<br>두 면적 모멘트가 가까운가? |
 
 ## Grading Criteria<br>평가기준
