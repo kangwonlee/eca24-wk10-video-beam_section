@@ -121,3 +121,6 @@ plt.show()
 ```
 
  So, what are you waiting for? Let's build a treehouse that's so epic that even Bart would envy! 🍕<br>이제 나무 위에 바트도 부러워 할 역대급 놀이방을 만들어 봅시다! 🍕
+
+
+(Truth be told, I had a little help from my brainiac buddy, Google Gemini, to whip up this assignment. But hey, even Einstein had a few lab assistants, right? So go on, impress me with your mad skills!)
