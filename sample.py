@@ -17,6 +17,18 @@ def sample_main():
     print(f'T-beam moment of inertia: {moment_m4:.6f} m^4')
     print(f'T-beam max bending stress: {bending_stress_max_pa:.6f} Pa')
 
+    a_above_below = beam.area_above_below_equal(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+
+    print(f"Area above the centroid {a_above_below['a_above']:.6g} m^2")
+    print(f"Area below the centroid {a_above_below['a_below']:.6g} m^2")
+    print(f"Are these areas close? {a_above_below['close']}")
+
+    q_above_below = beam.area_moment_above_below_equal(w0_m, h0_m, w1_m, h1_m, w2_m, h2_m)
+
+    print(f"Area moment above the centroid {q_above_below['a_moment_above']:.6g} m^2")
+    print(f"Area moment below the centroid {q_above_below['a_moment_below']:.6g} m^2")
+    print(f"Are these area moments close? {q_above_below['close']}")
+
     plt.fill_between(
         x=[(-0.5) * w0_m, (0.5) * w0_m],
         y1=[0, 0],
