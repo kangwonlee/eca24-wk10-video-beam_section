@@ -60,8 +60,8 @@ $$
 
 | return value key<br>반환값 key | type<br>형 |unit<br>단위 | value |
 |:--------:|:-----------:|:-----------:|:-----------:|
-| `'a_moment_above'` | `float` | $m^3$ | area moment of the section above the centroid<br>중립축 위의 면적 모멘트 |
-| `'a_moment_below'` | `float` | $m^3$ | area moment of the section below the centroid<br>중립축 아래의 면적 모멘트 |
+| `'a_moment_above'` | `float` | $m^3$ | area moment of the section above the centroid (>0)<br>중립축 위의 면적 모멘트 (>0) |
+| `'a_moment_below'` | `float` | $m^3$ | area moment of the section below the centroid (>0)<br>중립축 아래의 면적 모멘트 (>0) |
 | `'close'` | `bool` | - | whether these two area moments are close to each other?<br>두 면적 모멘트가 가까운가? |
 
 ## Grading Criteria<br>평가기준
