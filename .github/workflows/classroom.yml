@@ -3,10 +3,12 @@ on:
   - push
   - workflow_dispatch
   - repository_dispatch
+
 permissions:
   checks: write
   actions: read
   contents: read
+
 jobs:
   run-autograding-tests:
     runs-on: ubuntu-latest
@@ -14,6 +16,10 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Update pip
+      run: python -m pip install --upgrade pip
+
     - name: Create and Activate Virtual Environment
       run: |
         python -m venv test-env
@@ -51,6 +57,7 @@ jobs:
         command: ". test-env/bin/activate && python -m pytest tests/test_grammar.py"
         timeout: 1
         max-score: 1
+
     - name: all lines in the function
       id: all-lines-in-the-function
       uses: classroom-resources/autograding-command-grader@v1
@@ -60,6 +67,7 @@ jobs:
         command: ". test-env/bin/activate && python -m pytest tests/test_all_lines_in_the_function.py"
         timeout: 1
         max-score: 1
+
     - name: test result
       id: test-result
       uses: classroom-resources/autograding-command-grader@v1
@@ -69,6 +77,7 @@ jobs:
         command: ". test-env/bin/activate && python -m pytest -n auto tests/test_results.py"
         timeout: 2
         max-score: 2
+
     - name: test comparison
       id: test-comparison
       uses: classroom-resources/autograding-command-grader@v1
@@ -78,6 +87,7 @@ jobs:
         command: ". test-env/bin/activate && python -m pytest -n auto tests/test_comparison.py"
         timeout: 2
         max-score: 1
+
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:
@@ -87,6 +97,7 @@ jobs:
         TEST-RESULT_RESULTS: "${{steps.test-result.outputs.result}}"
       with:
         runners: check-grammar,all-lines-in-the-function,test-result,test-comparison
+
     - name: upload pngs as artifacts
       id: png-artifacts
       uses: actions/upload-artifact@v4
