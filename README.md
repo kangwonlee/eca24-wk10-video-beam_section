@@ -70,7 +70,7 @@ $$
 |:---------:|:------:|
 | Python Grammar<br>파이썬 문법	| 1 |
 | Coding Style<br>모든 코드는 함수 안에	| 1 |
-| `\*_above_below_equal()` Results<br>`\*_above_below_equal()` 결과	| 1 |
+| `*_above_below_equal()` Results<br>`*_above_below_equal()` 결과	| 1 |
 | Final Result<br>최종 결과	| 2 |
 
 * Make sure your code passes all the tests in GitHub Actions – it's like getting a thumbs-up! 👍<br>코드를 commit 한 후 저장소 Actions 에서 테스트를 모두 통과 하는지 확인 바랍니다. 👍
