@@ -68,7 +68,7 @@ $$
 
 | Criteria<br>기준	| Points<br>배점 |
 |:---------:|:------:|
-| Python Grammar<br>파이썬 문법	| 1 |
+| Python Syntax<br>파이썬 문법	| 1 |
 | Coding Style<br>모든 코드는 함수 안에	| 1 |
 | `*_above_below_equal()` Results<br>`*_above_below_equal()` 결과	| 1 |
 | Final Result<br>최종 결과	| 2 |
