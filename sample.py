@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import beam_analysis as beam
+import exercise as beam
 
 
 def sample_main():

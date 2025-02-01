@@ -10,12 +10,12 @@ import pytest
 sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.absolute()))
 
 # Import the functions you'll be testing from your beam_analysis module
-import beam_analysis as ba
+import exercise
 
 
 @pytest.fixture
 def result_area_above_below_equal(wh:Tuple[float]):
-    return ba.area_above_below_equal(*wh)
+    return exercise.area_above_below_equal(*wh)
 
 
 @pytest.fixture
@@ -114,7 +114,7 @@ def test_result_area_above_below_value_close(
 
 @pytest.fixture
 def result_area_moment_above_below_equal(wh:Tuple[float]):
-    return ba.area_moment_above_below_equal(*wh)
+    return exercise.area_moment_above_below_equal(*wh)
 
 
 @pytest.fixture

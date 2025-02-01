@@ -15,7 +15,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.absolute()))
 
 
 # Import the functions you'll be testing from your beam_analysis module
-import beam_analysis as ba
+import exercise
 import sample
 
 
@@ -66,7 +66,7 @@ def tot_I_m4(
 
 @pytest.fixture
 def result_area(wh:Tuple[float]):
-    return ba.area(*wh)
+    return exercise.area(*wh)
 
 
 @pytest.mark.area
@@ -89,7 +89,7 @@ def test_result_area_value(result_area:float, tot_area_m2:float):
 
 @pytest.fixture
 def result_centroid_y(wh:Tuple[float]):
-    return ba.centroid_y(*wh)
+    return exercise.centroid_y(*wh)
 
 
 @pytest.mark.centroid_y
@@ -123,7 +123,7 @@ def test_result_centroid_y_value(
 
 @pytest.fixture
 def result_moment_of_inertia(wh:Tuple[float]):
-    return ba.moment_of_inertia(*wh)
+    return exercise.moment_of_inertia(*wh)
 
 
 @pytest.mark.moment_of_inertia
@@ -146,7 +146,7 @@ def test_result_moment_of_inertia_value(result_moment_of_inertia:float, tot_I_m4
 
 @pytest.fixture
 def result_bending_stress(M_Nm:float, wh:Tuple[float]):
-    return ba.bending_stress(M_Nm, *wh)
+    return exercise.bending_stress(M_Nm, *wh)
 
 
 @pytest.fixture

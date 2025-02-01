@@ -33,7 +33,7 @@ $$
 
 <img alt="section dimensions" src="https://github.com/kangwonlee/beam_section/assets/17876446/2ae07371-9a3d-45d7-9c73-421de6640252" width="50%">
 
-* In `beam_analysis.py`, implement the following Python functions to calculate the area, centroid, moment of inertia, and bending stress of a T-beam cross-section.<br>`beam_analysis.py` 파일에 아래 파이썬 함수를 구현하여 T형 단면의 면적, 중심, 관성 모멘트, 그리고 굽힘 응력을 계산하시오.
+* In `exercise.py`, implement the following Python functions to calculate the area, centroid, moment of inertia, and bending stress of a T-beam cross-section.<br>`exercise.py` 파일에 아래 파이썬 함수를 구현하여 T형 단면의 면적, 중심, 관성 모멘트, 그리고 굽힘 응력을 계산하시오.
 
 | function<br>함수 | type<br>형 | unit<br>단위 | return value<br>반환값 |
 |:--------:|:-----------:|:-----------:|:-----------:|
@@ -82,7 +82,7 @@ $$
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
-import beam_analysis as beam
+import exercise as beam
 
 w0_m, h0_m = 50e-3, 12e-3
 w1_m, h1_m = 7.5e-3, 70e-3
