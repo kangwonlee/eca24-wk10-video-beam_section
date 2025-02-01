@@ -54,6 +54,7 @@ jobs:
         echo "syntax=report_syntax.json" >> $GITHUB_OUTPUT
         echo "style=report_style.json" >> $GITHUB_OUTPUT
         echo "results=report_results.json" >> $GITHUB_OUTPUT
+        echo "comparison=report_comparison.json" >> $GITHUB_OUTPUT
 
     - name: check syntax
       id: check-syntax
@@ -61,7 +62,7 @@ jobs:
       with:
         test-name: check syntax
         setup-command: ". test-env/bin/activate && echo $VIRTUAL_ENV && python -m pip list"
-        command: ". test-env/bin/activate && python -m pytest --json-report --json-report-file=${{ steps.json.outputs.syntax }} tests/test_syntax.py"
+        command: ". test-env/bin/activate && python -m pytest --json-report --json-report-indent=4 --json-report-file=${{ steps.json.outputs.syntax }} tests/test_syntax.py"
         timeout: 1
         max-score: 1
 
@@ -71,7 +72,7 @@ jobs:
       with:
         test-name: style
         setup-command: ". test-env/bin/activate && echo $VIRTUAL_ENV && python -m pip list"
-        command: ". test-env/bin/activate && python -m pytest --json-report --json-report-file=${{ steps.json.outputs.style }} tests/test_style.py"
+        command: ". test-env/bin/activate && python -m pytest --json-report --json-report-indent=4 --json-report-file=${{ steps.json.outputs.style }} tests/test_style.py"
         timeout: 1
         max-score: 1
 
@@ -81,7 +82,7 @@ jobs:
       with:
         test-name: test result
         setup-command: ". test-env/bin/activate && echo $VIRTUAL_ENV && python -m pip list"
-        command: ". test-env/bin/activate && python -m pytest -n auto --json-report --json-report-file=${{ steps.json.outputs.results }} tests/test_results.py"
+        command: ". test-env/bin/activate && python -m pytest -n auto --json-report --json-report-indent=4 --json-report-file=${{ steps.json.outputs.results }} tests/test_results.py"
         timeout: 2
         max-score: 2
 
@@ -91,7 +92,7 @@ jobs:
       with:
         test-name: test comparison
         setup-command: ". test-env/bin/activate && echo $VIRTUAL_ENV && python -m pip list"
-        command: ". test-env/bin/activate && python -m pytest -n auto --json-report --json-report-file=report_comparison.json tests/test_comparison.py"
+        command: ". test-env/bin/activate && python -m pytest -n auto --json-report --json-report-indent=4 --json-report-file=${{ steps.json.outputs.comparison }} tests/test_comparison.py"
         timeout: 2
         max-score: 1
 
