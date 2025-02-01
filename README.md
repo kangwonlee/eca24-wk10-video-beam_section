@@ -127,6 +127,10 @@ plt.show()
 
 ``From here is common to all assignments.``
 
+## Notes
+
+* This assignment was developed with the assistance of an AI language model for creative inspiration and guidance, demonstrating the potential of AI as a tool to enhance learning and problem-solving.  Students are encouraged to use AI responsibly and ethically, always prioritizing their own understanding and critical thinking.
+
 ## NOTICE REGARDING STUDENT SUBMISSIONS<br>제출 결과물에 대한 알림
 
 * Your submissions for this assignment may be used for various educational purposes. These purposes may include developing and improving educational tools, research, creating test cases, and training datasets.<br>제출 결과물은 다양한 교육 목적으로 사용될 수 있을 밝혀둡니다. (교육 도구 개발 및 개선, 연구, 테스트 케이스 및 교육용 데이터셋 생성 등).
