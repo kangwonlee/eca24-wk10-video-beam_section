@@ -1,4 +1,5 @@
 import math
+import os
 import pathlib
 import random
 import sys
@@ -11,7 +12,15 @@ import matplotlib.pyplot as plt
 import pytest
 
 
-sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.absolute()))
+sys.path.insert(
+    0,
+    os.getenv(
+        'STUDENT_CODE_FOLDER',
+        str(
+            pathlib.Path(__file__).parent.parent.absolute()
+        )
+    )
+)
 
 
 # Import the functions you'll be testing from your beam_analysis module

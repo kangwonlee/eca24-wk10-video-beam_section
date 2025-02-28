@@ -1,3 +1,4 @@
+import os
 import math
 import pathlib
 import sys
@@ -7,7 +8,16 @@ from typing import Dict, Tuple
 
 import pytest
 
-sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.absolute()))
+sys.path.insert(
+    0,
+    os.getenv(
+        'STUDENT_CODE_FOLDER',
+        str(
+            pathlib.Path(__file__).parent.parent.absolute()
+        )
+    )
+)
+
 
 # Import the functions you'll be testing from your beam_analysis module
 import exercise
